@@ -16,13 +16,11 @@ type Storage interface {
 	DownloadFile(string, string, *[]byte)
 }
 type Azure struct {
-	client hubAzure.Client
-	data   []byte
+	data []byte
 }
 
 type S3 struct {
-	client s3.Client
-	data   []byte
+	data []byte
 }
 
 func (a *Azure) CreateList(containerName string) {
