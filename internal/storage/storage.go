@@ -24,67 +24,67 @@ type S3 struct {
 }
 
 func (a *Azure) CreateList(containerName string) {
-	hubAzure.CreateContainer(&a.client, containerName)
+	hubAzure.CreateContainer(containerName)
 }
 
 func (a *Azure) GetList() []string {
-	return hubAzure.GetContainers(&a.client)
+	return hubAzure.GetContainers()
 }
 
 func (a *Azure) GetFileList(containerName string) []string {
-	return hubAzure.GetBlobs(&a.client, containerName)
+	return hubAzure.GetBlobs(containerName)
 }
 
 func (a *Azure) UploadFile(containerName string, blobName string, data []byte) {
-	hubAzure.UploadBlob(&a.client, containerName, blobName, data)
+	hubAzure.UploadBlob(containerName, blobName, data)
 }
 
 func (a *Azure) DownloadFile(containerName string, blobName string, data *[]byte) {
-	hubAzure.DownloadBlob(&a.client, containerName, blobName, &a.data)
+	hubAzure.DownloadBlob(containerName, blobName, &a.data)
 	data = &a.data
 }
 func (a *Azure) PartialUploadFile(containerName string, blobName string, i io.Reader) {
-	hubAzure.PartialUploadBlob(&a.client, containerName, blobName, i)
+	hubAzure.PartialUploadBlob(containerName, blobName, i)
 }
 
 func (s *S3) CreateList(bucketName string) {
-	hubAWS.CreateBucket(&s.client, bucketName, "ap-northeast-2")
+	hubAWS.CreateBucket(bucketName, "ap-northeast-2")
 }
 
 func (s *S3) GetList() []string {
-	return hubAWS.GetBuckets(&s.client)
+	return hubAWS.GetBuckets()
 }
 
 func (s *S3) GetFileList(bucketName string) []string {
-	return hubAWS.GetObjects(&s.client, bucketName)
+	return hubAWS.GetObjects(bucketName)
 }
 
 func (s *S3) UploadFile(bucketName string, objectName string, data []byte) {
-	hubAWS.UploadObject(&s.client, bucketName, objectName, data)
+	hubAWS.UploadObject(bucketName, objectName, data)
 }
 
 func (s *S3) DownloadFile(bucketName string, objectName string, data *[]byte) {
-	hubAWS.DownloadObject(&s.client, bucketName, objectName, &s.data)
+	hubAWS.DownloadObject(bucketName, objectName, &s.data)
 	data = &s.data
 }
 
 func (s *S3) PartialUploadFile(bucketName string, objectName string, i io.Reader) {
-	hubAWS.PartialUploadObject(&s.client, bucketName, objectName, i)
+	hubAWS.PartialUploadObject(bucketName, objectName, i)
 }
 
 func NewClient(client string, cfg *configs.Configuration) Storage {
 	if client == "azure" {
 		return &Azure{
-			client: hubAzure.GetClient(cfg.Azure),
+			hubAzure.GetClient(cfg.Azure),
 		}
 	}
 	if client == "aws" {
 		return &S3{
-			client: hubAWS.GetClient(cfg.AWS),
+			hubAWS.GetClient(cfg.AWS),
 		}
 	}
 	// default
 	return &Azure{
-		client: hubAzure.GetClient(cfg.Azure),
+		hubAzure.GetClient(cfg.Azure),
 	}
 }
