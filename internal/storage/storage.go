@@ -2,8 +2,8 @@ package storage
 
 import (
 	"github.com/janghanbin/go-storage-manager/configs"
-	hubAWS "github.com/janghanbin/go-storage-manager/internal/storage/azure"
-	hubAzure "github.com/janghanbin/go-storage-manager/internal/storage/s3"
+	hubAzure "github.com/janghanbin/go-storage-manager/internal/storage/azure"
+	hubAWS "github.com/janghanbin/go-storage-manager/internal/storage/s3"
 	"io"
 )
 
@@ -75,16 +75,16 @@ func (s *S3) PartialUploadFile(bucketName string, objectName string, i io.Reader
 func NewClient(client string, cfg *configs.Configuration) Storage {
 	if client == "azure" {
 		return &Azure{
-			hubAzure.GetClient(cfg.Azure),
+			//hubAzure.GetClient(cfg.Azure),
 		}
 	}
 	if client == "aws" {
 		return &S3{
-			hubAWS.GetClient(cfg.AWS),
+			//hubAWS.GetClient(cfg.AWS),
 		}
 	}
 	// default
 	return &Azure{
-		hubAzure.GetClient(cfg.Azure),
+		//hubAzure.GetClient(cfg.Azure),
 	}
 }
