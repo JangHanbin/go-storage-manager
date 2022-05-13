@@ -83,13 +83,13 @@ func NewClient(client string, cfg *configs.Configuration) Storage {
 	case "azure":
 		return &Azure{
 			token:    cfg.Azure.BlobServiceSASURL,
-			endpoint: configs.GetAzureConnectionValue(cfg.Azure.ConnectionString, configs.BLOBENDPOINT)
+			endpoint: configs.GetAzureConnectionValue(cfg.Azure.ConnectionString, configs.BLOBENDPOINT),
 		}
 	case "aws":
 		return &S3{
 			//hubAWS.GetClient(cfg.AWS),
 		}
-	default :
+	default:
 		return &Azure{
 			token:    cfg.Azure.BlobServiceSASURL,
 			endpoint: configs.GetAzureConnectionValue(cfg.Azure.ConnectionString, configs.BLOBENDPOINT),
