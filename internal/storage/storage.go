@@ -5,6 +5,7 @@ import (
 	hubAzure "github.com/janghanbin/go-storage-manager/internal/storage/azure"
 	hubAWS "github.com/janghanbin/go-storage-manager/internal/storage/s3"
 	"io"
+	"strings"
 )
 
 type Storage interface {
@@ -16,11 +17,14 @@ type Storage interface {
 	DownloadFile(string, string, *[]byte)
 }
 type Azure struct {
-	data []byte
+	data     []byte
+	token    string
+	endpoint string
 }
 
 type S3 struct {
-	data []byte
+	data     []byte
+	endPoint string
 }
 
 func (a *Azure) CreateList(containerName string) {
@@ -28,7 +32,8 @@ func (a *Azure) CreateList(containerName string) {
 }
 
 func (a *Azure) GetList() []string {
-	return hubAzure.GetContainers()
+
+	return hubAzure.GetContainers(a.endpoint, a.token)
 }
 
 func (a *Azure) GetFileList(containerName string) []string {
@@ -73,18 +78,22 @@ func (s *S3) PartialUploadFile(bucketName string, objectName string, i io.Reader
 }
 
 func NewClient(client string, cfg *configs.Configuration) Storage {
-	if client == "azure" {
+
+	switch strings.ToLower(client) {
+	case "azure":
 		return &Azure{
-			//hubAzure.GetClient(cfg.Azure),
+			token:    cfg.Azure.BlobServiceSASURL,
+			endpoint: configs.GetAzureConnectionValue(cfg.Azure.ConnectionString, configs.BLOBENDPOINT)
 		}
-	}
-	if client == "aws" {
+	case "aws":
 		return &S3{
 			//hubAWS.GetClient(cfg.AWS),
 		}
+	case "default":
+		return &Azure{
+			token:    cfg.Azure.BlobServiceSASURL,
+			endpoint: configs.GetAzureConnectionValue(cfg.Azure.ConnectionString, configs.BLOBENDPOINT),
+		}
 	}
-	// default
-	return &Azure{
-		//hubAzure.GetClient(cfg.Azure),
-	}
+
 }

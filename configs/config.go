@@ -4,6 +4,20 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strings"
+)
+
+const (
+	BLOBENDPOINT int = iota
+	QUEUEENDPOINT
+	FILEENDPOINT
+	TABLEENDPOINT
+	SIGNATURE
+)
+
+const (
+	KEY int = iota
+	VALUE
 )
 
 type Configuration struct {
@@ -44,4 +58,13 @@ func ReadConfiguration(path string) *Configuration {
 	}
 
 	return Cfg
+}
+
+func GetAzureConnectionValue(connectionStrings string, connectionIdx int) (value string) {
+	connectionString := strings.Split(connectionStrings, ";")[connectionIdx] // Azure connection string seperated by ';'
+	keyValuePair := strings.Split(connectionString, "=")                     // Azure key value seperated by '='
+
+	value = keyValuePair[VALUE]
+
+	return value
 }
