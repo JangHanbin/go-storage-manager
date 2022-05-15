@@ -1,9 +1,11 @@
 package azure
 
 import (
+	"encoding/xml"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 )
 
 func CreateContainer(containerName string) {
@@ -15,7 +17,15 @@ func DeleteContainer(containerName string) {
 }
 
 func GetContainers(endpoint string, token string) (containers []string) {
-	resp, err := http.Get("https://jsonplaceholder.typicode.com/posts/1")
+	u, _ := url.Parse(endpoint)
+
+	u.RawQuery = token
+	q := u.Query()
+	q.Add("comp", "list")
+	q.Add("restype", "container")
+	u.RawQuery = q.Encode()
+
+	resp, err := http.Get(u.String())
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -24,9 +34,16 @@ func GetContainers(endpoint string, token string) (containers []string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	//Convert the body to type string
-	sb := string(body)
-	log.Printf(sb)
+
+	var result EnumerationResults
+	err = xml.Unmarshal(body, &result)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, container := range result.Containers {
+		containers = append(containers, container.Name) // append names into return value
+	}
 
 	return containers
 }
