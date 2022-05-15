@@ -3,21 +3,8 @@ package configs
 import (
 	"encoding/json"
 	"log"
+	"net/url"
 	"os"
-	"strings"
-)
-
-const (
-	BLOBENDPOINT int = iota
-	QUEUEENDPOINT
-	FILEENDPOINT
-	TABLEENDPOINT
-	SIGNATURE
-)
-
-const (
-	KEY int = iota
-	VALUE
 )
 
 type Configuration struct {
@@ -26,12 +13,7 @@ type Configuration struct {
 }
 
 type AzureConfiguration struct {
-	ConnectionString   string
-	SASToken           string
-	BlobServiceSASURL  string
-	FileServiceSASURL  string
-	QueueServiceSASURL string
-	TableServiceSASURL string
+	SAS string
 }
 
 type AWSConfiguration struct {
@@ -60,11 +42,13 @@ func ReadConfiguration(path string) *Configuration {
 	return Cfg
 }
 
-func GetAzureConnectionValue(connectionStrings string, connectionIdx int) (value string) {
-	connectionString := strings.Split(connectionStrings, ";")[connectionIdx] // Azure connection string seperated by ';'
-	keyValuePair := strings.Split(connectionString, "=")                     // Azure key value seperated by '='
+func SplitSAS(tokenString string) (endpoint string, token string) {
+	u, err := url.Parse(tokenString)
 
-	value = keyValuePair[VALUE]
-
-	return value
+	if err != nil {
+		log.Fatal(err)
+	}
+	endpoint = u.Scheme + "://" + u.Opaque + u.Host + u.Path
+	token = u.RawQuery
+	return
 }
