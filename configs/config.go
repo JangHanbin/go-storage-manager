@@ -7,19 +7,6 @@ import (
 	"os"
 )
 
-const (
-	BLOBENDPOINT int = iota
-	QUEUEENDPOINT
-	FILEENDPOINT
-	TABLEENDPOINT
-	SIGNATURE
-)
-
-const (
-	KEY int = iota
-	VALUE
-)
-
 type Configuration struct {
 	Azure AzureConfiguration
 	AWS   AWSConfiguration
