@@ -81,18 +81,21 @@ func NewClient(client string, cfg *configs.Configuration) Storage {
 
 	switch strings.ToLower(client) {
 	case "azure":
+		endpoint, token := configs.SplitSAS(cfg.Azure.SAS) // SAS token은 URL과 토큰이 합쳐진 상태로 전달됨
+
 		return &Azure{
-			token:    cfg.Azure.BlobServiceSASURL,
-			endpoint: configs.GetAzureConnectionValue(cfg.Azure.ConnectionString, configs.BLOBENDPOINT),
+			token:    token,
+			endpoint: endpoint,
 		}
 	case "aws":
 		return &S3{
 			//hubAWS.GetClient(cfg.AWS),
 		}
 	default:
+		endpoint, token := configs.SplitSAS(cfg.Azure.SAS)
 		return &Azure{
-			token:    cfg.Azure.BlobServiceSASURL,
-			endpoint: configs.GetAzureConnectionValue(cfg.Azure.ConnectionString, configs.BLOBENDPOINT),
+			token:    token,
+			endpoint: endpoint,
 		}
 	}
 
